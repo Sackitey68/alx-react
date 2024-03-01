@@ -1,31 +1,50 @@
 import { LOGIN, LOGOUT, DISPLAY_NOTIFICATION_DRAWER, HIDE_NOTIFICATION_DRAWER } from "./uiActionTypes";
+import fetch from "node-fetch";
 
-import { login, logout, hideNotificationDrawer, displayNotificationDrawer } from "./uiActionCreators";
+export function login(email, password) {
+  return {
+    type: LOGIN,
+    user: { email, password },
+  };
+}
 
-describe("tests for UI notification action creators", () => {
-  it("should create proper action for login", () => {
-    const email = "james@gmail.com";
-    const password = "heheheh";
+export const boundLogin = (email, password) => dispatch(login(email, password));
 
-    expect(login(email, password)).toEqual({
-      type: LOGIN,
-      user: { email: "james@gmail.com", password: "heheheh" },
-    });
-  });
+export const logout = () => ({ type: LOGOUT });
 
-  it("should create proper action for logout", () => {
-    expect(logout()).toEqual({ type: LOGOUT });
-  });
+export const boundLogout = () => dispatch(logout());
 
-  it("should create proper action for displaying notification drawer", () => {
-    expect(displayNotificationDrawer()).toEqual({
-      type: DISPLAY_NOTIFICATION_DRAWER,
-    });
-  });
-
-  it("should create proper action for hiding notification drawer", () => {
-    expect(hideNotificationDrawer()).toEqual({
-      type: HIDE_NOTIFICATION_DRAWER,
-    });
-  });
+export const displayNotificationDrawer = () => ({
+  type: DISPLAY_NOTIFICATION_DRAWER,
 });
+
+export const boundDisplayNotificationDrawer = () => dispatch(displayNotificationDrawer());
+
+export const hideNotificationDrawer = () => ({
+  type: HIDE_NOTIFICATION_DRAWER,
+});
+
+export const boundHideNotificationDrawer = () => dispatch(hideNotificationDrawer());
+
+export function loginSuccess() {
+  return {
+    type: LOGIN_SUCCESS,
+  };
+}
+
+export function loginFailure() {
+  return {
+    type: LOGIN_FAILURE,
+  };
+}
+
+export function loginRequest(email, password) {
+  return (dispatch) => {
+    boundLogin(email, password);
+
+    return fetch("http://localhost:8564/login-success.json")
+      .then((res) => res.json())
+      .then((json) => dispatch(loginSuccess()))
+      .catch((error) => dispatch(loginFailure()));
+  };
+}

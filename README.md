@@ -1,4 +1,1 @@
-# ALX React
-
-### Learning Objectives
-#### getting started with REACT
+React Redux reducer+selector

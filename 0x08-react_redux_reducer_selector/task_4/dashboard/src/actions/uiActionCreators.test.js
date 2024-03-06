@@ -1,31 +1,44 @@
-import { LOGIN, LOGOUT, DISPLAY_NOTIFICATION_DRAWER, HIDE_NOTIFICATION_DRAWER } from "./uiActionTypes";
+import {
+  LOGIN,
+  LOGOUT,
+  DISPLAY_NOTIFICATION_DRAWER,
+  HIDE_NOTIFICATION_DRAWER,
+} from './uiActionTypes';
 
-import { login, logout, hideNotificationDrawer, displayNotificationDrawer } from "./uiActionCreators";
+import {
+  login,
+  logout,
+  displayNotificationDrawer,
+  hideNotificationDrawer,
+} from './uiActionCreators';
 
-describe("tests for UI notification action creators", () => {
-  it("should create proper action for login", () => {
-    const email = "james@gmail.com";
-    const password = "heheheh";
+describe('action creators', () => {
+  it('login', () => {
+    const user = { email: 'account@domain.extension', password: 123456789 };
+    const data = { type: LOGIN, user };
+    const result = login(user.email, user.password);
 
-    expect(login(email, password)).toEqual({
-      type: LOGIN,
-      user: { email: "james@gmail.com", password: "heheheh" },
-    });
+    expect(result).toEqual(data);
   });
 
-  it("should create proper action for logout", () => {
-    expect(logout()).toEqual({ type: LOGOUT });
+  it('logout', () => {
+    const data = { type: LOGOUT };
+    const result = logout();
+
+    expect(result).toEqual(data);
   });
 
-  it("should create proper action for displaying notification drawer", () => {
-    expect(displayNotificationDrawer()).toEqual({
-      type: DISPLAY_NOTIFICATION_DRAWER,
-    });
+  it('displayNotificationDrawer', () => {
+    const data = { type: DISPLAY_NOTIFICATION_DRAWER };
+    const result = displayNotificationDrawer();
+
+    expect(result).toEqual(data);
   });
 
-  it("should create proper action for hiding notification drawer", () => {
-    expect(hideNotificationDrawer()).toEqual({
-      type: HIDE_NOTIFICATION_DRAWER,
-    });
+  it('hideNotificationDrawer', () => {
+    const data = { type: HIDE_NOTIFICATION_DRAWER };
+    const result = hideNotificationDrawer();
+
+    expect(result).toEqual(data);
   });
 });

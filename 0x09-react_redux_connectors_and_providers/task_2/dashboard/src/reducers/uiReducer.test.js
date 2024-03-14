@@ -1,5 +1,7 @@
 import uiReducer, { initialState } from "./uiReducer";
-import { DISPLAY_NOTIFICATION_DRAWER } from "../actions/uiActionTypes";
+import { LOGIN, DISPLAY_NOTIFICATION_DRAWER } from "../actions/uiActionTypes";
+
+const USER = { email: "larry@hudson.com", password: "123456" };
 
 describe("uiReducer tests", function () {
   it("verifies the state returned by the uiReducer function equals the initial state when no action is passed", function () {
@@ -18,6 +20,15 @@ describe("uiReducer tests", function () {
     expect(state.toJS()).toEqual({
       ...initialState,
       isNotificationDrawerVisible: true,
+    });
+  });
+
+  it("verifies the state returned by the uiReducer function, when the action LOGIN is passed, changes correctly the user property", function () {
+    const state = uiReducer(undefined, { type: LOGIN, user: USER });
+
+    expect(state.toJS()).toEqual({
+      ...initialState,
+      user: USER,
     });
   });
 });

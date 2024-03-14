@@ -1,14 +1,16 @@
-import { Map } from "immutable";
+import { Map, fromJS } from "immutable";
 
 import {
   FETCH_NOTIFICATIONS_SUCCESS,
   MARK_AS_READ,
   SET_TYPE_FILTER,
+  SET_LOADING_STATE,
 } from "../actions/notificationActionTypes";
 
 export const initialNotificationState = {
-  notifications: [],
+  notifications: {},
   filter: "DEFAULT",
+  loading: false,
 };
 
 import notificationsNormalizer from "../schema/notifications";
@@ -21,7 +23,8 @@ const notificationReducer = (state = Map(initialNotificationState), action) => {
       Object.keys(normalizedData.notifications).map((key) => {
         normalizedData.notifications[key].isRead = false;
       });
-      return state.merge(normalizedData);
+
+      return state.mergeDeep(normalizedData);
 
     case MARK_AS_READ:
       return state.setIn(
@@ -31,6 +34,9 @@ const notificationReducer = (state = Map(initialNotificationState), action) => {
 
     case SET_TYPE_FILTER:
       return state.set("filter", action.filter);
+
+    case SET_LOADING_STATE:
+      return state.set("loading", action.loading);
 
     default:
       break;

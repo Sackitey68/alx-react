@@ -1,100 +1,123 @@
-import React, { PureComponent } from "react";
+import React from "react";
 import NotificationItem from "./NotificationItem";
 import PropTypes from "prop-types";
-import NotificationItemShape from "./NotificationItemShape";
 import closeIcon from "../assets/close-icon.png";
 import { StyleSheet, css } from "aphrodite";
 
-class Notifications extends PureComponent {
-  constructor(props) {
-    super(props);
-    // this.markAsRead = this.markAsRead.bind(this);
-  }
+function Notifications(props) {
+  const {
+    displayDrawer,
+    listNotifications,
+    handleDisplayDrawer,
+    handleHideDrawer,
+    markNotificationAsRead,
+    setNotificationFilter,
+  } = props;
 
-  render() {
-    const {
-      displayDrawer,
-      listNotifications,
-      handleDisplayDrawer,
-      handleHideDrawer,
-      markNotificationAsRead,
-    } = this.props;
+  const menuPStyle = css(
+    displayDrawer ? styles.menuItemPNoShow : styles.menuItemPShow
+  );
 
-    const menuPStyle = css(
-      displayDrawer ? styles.menuItemPNoShow : styles.menuItemPShow
-    );
-
-    return (
-      <>
-        <div
-          className={css(styles.menuItem)}
-          id="menuItem"
-          onClick={handleDisplayDrawer}
-        >
-          <p className={menuPStyle}>Your notifications</p>
-        </div>
-        {displayDrawer && (
-          <div className={css(styles.notifications)} id="Notifications">
-            <button
-              style={{
-                background: "transparent",
-                border: "none",
-                position: "absolute",
-                right: 20,
-              }}
-              aria-label="close"
-              onClick={handleHideDrawer}
-              id="closeNotifications"
-            >
-              <img
-                src={closeIcon}
-                alt="close-icon"
-                className={css(styles.notificationsButtonImage)}
+  return (
+    <>
+      <div
+        className={css(styles.menuItem)}
+        id="menuItem"
+        onClick={handleDisplayDrawer}
+      >
+        <p className={menuPStyle}>Your notifications</p>
+      </div>
+      {displayDrawer && (
+        <div className={css(styles.notifications)} id="Notifications">
+          <button
+            style={{
+              background: "transparent",
+              border: "none",
+              position: "absolute",
+              right: 20,
+            }}
+            aria-label="close"
+            onClick={handleHideDrawer}
+            id="closeNotifications"
+          >
+            <img
+              src={closeIcon}
+              alt="close-icon"
+              className={css(styles.notificationsButtonImage)}
+            />
+          </button>
+          <p className={css(styles.notificationsP)}>
+            Here is the list of notifications
+          </p>
+          <button
+            type="button"
+            className={css(styles.filterButton)}
+            id="buttonFilterUrgent"
+            onClick={() => {
+              setNotificationFilter("URGENT");
+            }}
+          >
+            ❗❗
+          </button>
+          <button
+            type="button"
+            className={css(styles.filterButton)}
+            id="buttonFilterDefault"
+            onClick={() => {
+              setNotificationFilter("DEFAULT");
+            }}
+          >
+            💠
+          </button>
+          <ul className={css(styles.notificationsUL)}>
+            {(!listNotifications || listNotifications.count() === 0) && (
+              <NotificationItem
+                type="noNotifications"
+                value="No new notifications for now"
               />
-            </button>
-            <p className={css(styles.notificationsP)}>
-              Here is the list of notifications
-            </p>
-            <ul className={css(styles.notificationsUL)}>
-              {listNotifications.length === 0 && (
-                <NotificationItem
-                  type="noNotifications"
-                  value="No new notifications for now"
-                />
-              )}
+            )}
 
-              {listNotifications.map((notification) => (
-                <NotificationItem
-                  key={notification.id}
-                  id={notification.id}
-                  type={notification.type}
-                  value={notification.value}
-                  html={notification.html}
-                  markAsRead={markNotificationAsRead}
-                />
-              ))}
-            </ul>
-          </div>
-        )}
-      </>
-    );
-  }
+            {listNotifications &&
+              listNotifications.valueSeq().map((notification) => {
+                let html = notification.get("html");
+
+                if (html) html = html.toJS();
+
+                return (
+                  <NotificationItem
+                    key={notification.get("guid")}
+                    id={notification.get("guid")}
+                    type={notification.get("type")}
+                    value={notification.get("value")}
+                    html={html}
+                    markAsRead={markNotificationAsRead}
+                  />
+                );
+              })}
+          </ul>
+        </div>
+      )}
+    </>
+  );
 }
 
 Notifications.defaultProps = {
   displayDrawer: false,
-  listNotifications: [],
+  listNotifications: null,
   handleDisplayDrawer: () => {},
   handleHideDrawer: () => {},
   markNotificationAsRead: () => {},
+  fetchNotifications: () => {},
+  setNotificationFilter: () => {},
 };
 
 Notifications.propTypes = {
   displayDrawer: PropTypes.bool,
-  listNotifications: PropTypes.arrayOf(NotificationItemShape),
+  listNotifications: PropTypes.object,
   handleDisplayDrawer: PropTypes.func,
   handleHideDrawer: PropTypes.func,
   markNotificationAsRead: PropTypes.func,
+  setNotificationFilter: PropTypes.func,
 };
 
 const cssVars = {
@@ -165,8 +188,7 @@ const styles = StyleSheet.create({
   },
 
   notifications: {
-    float: "right",
-    // border: `3px dashed ${cssVars.mainColor}`,
+  
     padding: "10px",
     marginBottom: "20px",
     animationName: [borderKeyframes],
@@ -175,7 +197,7 @@ const styles = StyleSheet.create({
     animationFillMode: "forwards",
     ":hover": {
       border: `3px dashed deepSkyBlue`,
-      // animationFillMode: "forwards",
+     
     },
     [screenSize.small]: {
       float: "none",
@@ -185,7 +207,7 @@ const styles = StyleSheet.create({
       fontSize: "20px",
       ":hover": {
         border: "none",
-        // animationFillMode: "forwards",
+        
       },
       position: "absolute",
       background: "white",
@@ -208,6 +230,17 @@ const styles = StyleSheet.create({
     [screenSize.small]: {
       padding: 0,
     },
+  },
+
+  filterButton: {
+    height: "30px",
+    width: "50px",
+    backgroundColor: "AliceBlue",
+    border: "none",
+    display: "inline-block",
+    border: "1px solid CornflowerBlue",
+    boxShadow: "1px 1px CornflowerBlue",
+    margin: "5px 5px 0px 5px",
   },
 });
 

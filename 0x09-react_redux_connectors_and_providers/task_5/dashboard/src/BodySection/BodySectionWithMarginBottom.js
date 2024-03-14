@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import BodySection from './BodySection';
-import { StyleSheet, css } from 'aphrodite';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import BodySection from "./BodySection";
+import { StyleSheet, css } from "aphrodite";
 
 class BodySectionWithMarginBottom extends Component {
   constructor(props) {
@@ -18,16 +18,24 @@ class BodySectionWithMarginBottom extends Component {
 }
 
 BodySectionWithMarginBottom.defaultProps = {
-  title: '',
+  title: "",
 };
 
 BodySectionWithMarginBottom.propTypes = {
   title: PropTypes.string,
 };
 
+const screenSize = {
+  small: "@media screen and (max-width: 900px)",
+};
+
 const styles = StyleSheet.create({
-  boySectionWithMargin: {
-    width: '100%',
+  bodySectionWithMargin: {
+    marginBottom: "40px",
+    width: "100%",
+    [screenSize.small]: {
+      marginBottom: "10px",
+    },
   },
 });
 

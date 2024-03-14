@@ -63,7 +63,7 @@ NotificationItem.propTypes = {
     __html: PropTypes.string,
   }),
   markAsRead: PropTypes.func,
-  id: PropTypes.number,
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 const screenSize = {
